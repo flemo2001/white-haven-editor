@@ -160,6 +160,13 @@ function ProjectsHeader() {
 						</BreadcrumbList>
 					</Breadcrumb>
 
+					<Link
+						href="/projects/shared"
+						className="text-muted-foreground hover:text-foreground text-sm border rounded-md px-3 py-1.5"
+					>
+						Shared with team →
+					</Link>
+
 					<div className="hidden md:flex items-center rounded-md border p-1 px-1.5 h-10">
 						{VIEW_MODE_OPTIONS.map(({ mode, icon, label }) => (
 							<Button
