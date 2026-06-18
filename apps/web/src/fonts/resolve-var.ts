@@ -16,9 +16,6 @@
 export function resolveCssVarFontFamily(value: string): string {
   if (!value) return value;
   if (typeof window === "undefined") return value;
-  // The presets are stored as `var(--font-xxx), <generic>`. Pull the var
-  // expression, resolve it, drop the generic — `buildTextFontString` will
-  // re-append `, sans-serif` itself.
   const trimmed = value.trim();
   const match = trimmed.match(/^var\((--[a-zA-Z0-9-]+)\)/);
   if (!match) return trimmed;
@@ -26,8 +23,16 @@ export function resolveCssVarFontFamily(value: string): string {
     .getComputedStyle(document.documentElement)
     .getPropertyValue(match[1])
     .trim();
-  // If the var isn't defined in this document (mounted outside the
-  // <body className={fontVariables}> scope, or pre-hydration) keep the raw
-  // string — no regression vs current behaviour.
-  return resolved || trimmed;
+  if (!resolved) return trimmed;
+  // next/font's computed value is a comma-separated, quoted family list like:
+  //   "Archivo Black","Archivo Black Fallback"
+  // Pulling the primary name out gives the canvas font shorthand a single
+  // identifier it can match against the loaded FontFace, instead of trying to
+  // resolve the whole `"X","X Fallback"` list as one quoted family name and
+  // silently dropping to sans-serif. The Fallback variant is a CSS-only
+  // anti-FOUT measure — canvas waits on the real font being loaded anyway
+  // (next/font preloads at the document level).
+  const firstQuoted = resolved.match(/^"([^"]+)"/);
+  if (firstQuoted) return firstQuoted[1];
+  return resolved.split(",")[0].trim() || trimmed;
 }
