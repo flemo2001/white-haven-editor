@@ -46,10 +46,24 @@ export function TextEditOverlay({
 		const div = divRef.current;
 		if (!div) return;
 		const text = div.innerText;
+		// MERGE the new content into the existing params instead of passing only
+		// { content }. previewElements stores the updates object as-is and the
+		// later applyPreviewOverlay does a SHALLOW `{...element, ...overlay}`
+		// merge — so passing `params: { content }` replaces the whole params
+		// object on overlay, dropping fontSize/fontFamily/color/etc. Visible
+		// symptom (Smitho 2026-06-18): typing in edit mode reverted text to
+		// the default fontSize because the params no longer carried the user's
+		// custom size.
 		editor.timeline.previewElements({
-			updates: [{ trackId, elementId, updates: { params: { content: text } } }],
+			updates: [
+				{
+					trackId,
+					elementId,
+					updates: { params: { ...element.params, content: text } },
+				},
+			],
 		});
-	}, [editor.timeline, trackId, elementId]);
+	}, [editor.timeline, trackId, elementId, element.params]);
 
 	const handleKeyDown = useCallback(
 		({ event }: { event: React.KeyboardEvent }) => {
