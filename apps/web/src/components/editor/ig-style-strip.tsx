@@ -11,6 +11,7 @@
 import { useEditor } from "@/editor/use-editor";
 import type { TimelineElement } from "@/timeline";
 import { IG_STYLE_PRESETS, type IgStylePreset } from "@/fonts/ig-styles";
+import { resolveCssVarFontFamily } from "@/fonts/resolve-var";
 import { cn } from "@/utils/ui";
 
 export function IgStyleStrip({
@@ -24,9 +25,12 @@ export function IgStyleStrip({
 
   const apply = (preset: IgStylePreset) => {
     if (!("params" in element)) return;
+    // Resolve `var(--font-xxx)` to the actual next/font hashed family name —
+    // the canvas text renderer can't read CSS vars and would silently fall
+    // back to sans-serif otherwise. See fonts/resolve-var.ts.
     const nextParams: Record<string, unknown> = {
       ...element.params,
-      fontFamily: preset.fontFamily,
+      fontFamily: resolveCssVarFontFamily(preset.fontFamily),
       fontWeight: preset.fontWeight,
       fontStyle: preset.fontStyle,
     };
@@ -59,7 +63,10 @@ export function IgStyleStrip({
       </div>
       <div className="-mx-1 flex gap-1.5 overflow-x-auto px-1 pb-1">
         {IG_STYLE_PRESETS.map((preset) => {
-          const isActive = currentFontFamily === preset.fontFamily;
+          // Match on the RESOLVED value because apply() stores the resolved
+          // font name (not the raw var() expression) in params.fontFamily.
+          const isActive =
+            currentFontFamily === resolveCssVarFontFamily(preset.fontFamily);
           return (
             <button
               key={preset.id}
