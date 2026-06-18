@@ -1,5 +1,6 @@
 import type { TextCanvasContext, TextBlockMeasurement } from "@/text/layout";
 import { DEFAULTS } from "@/timeline/defaults";
+import { resolveCssVarFontFamily } from "@/fonts/resolve-var";
 import { clamp } from "@/utils/math";
 import { CORNER_RADIUS_MAX, CORNER_RADIUS_MIN } from "./background";
 import {
@@ -68,7 +69,12 @@ export function buildTextFontString({
 	fontStyle: TextFontStyle;
 	scaledFontSize: number;
 }): string {
-	return `${fontStyle} ${fontWeight} ${scaledFontSize}px ${quoteFontFamily({ fontFamily })}, sans-serif`;
+	// Resolve CSS-var families to the underlying font name. New presets store
+	// the resolved name at apply time; this covers legacy elements that were
+	// saved with a raw `var(--font-xxx), <generic>` value before the apply-time
+	// fix shipped — they would otherwise render in the canvas fallback font.
+	const resolved = resolveCssVarFontFamily(fontFamily);
+	return `${fontStyle} ${fontWeight} ${scaledFontSize}px ${quoteFontFamily({ fontFamily: resolved })}, sans-serif`;
 }
 
 export function resolveTextLayout({
