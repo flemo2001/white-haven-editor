@@ -324,6 +324,18 @@ const textElementParams: ElementParamDefinition[] = [
 		step: 1,
 		dependencies: [{ param: "background.enabled", equals: true }],
 	},
+	{
+		key: "background.mode",
+		label: "Background Mode",
+		type: "select",
+		default: DEFAULTS.text.background.mode,
+		keyframable: false,
+		options: [
+			{ value: "block", label: "Block (one rect)" },
+			{ value: "per-letter", label: "Per-letter (IG pills)" },
+		],
+		dependencies: [{ param: "background.enabled", equals: true }],
+	},
 ];
 
 export const elementParamRegistry = new DefinitionRegistry<

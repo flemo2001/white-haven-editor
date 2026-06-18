@@ -58,6 +58,7 @@ const TEXT_PARAM_KEYS = [
 	"background.paddingY",
 	"background.offsetX",
 	"background.offsetY",
+	"background.mode",
 ] as const;
 
 export type TabContentProps = {

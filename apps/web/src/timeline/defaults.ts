@@ -26,6 +26,7 @@ const defaultTextBackground = {
 	paddingY: 42,
 	offsetX: 0,
 	offsetY: 0,
+	mode: "block" as "block" | "per-letter",
 };
 
 const defaultTextElement: Omit<TextElement, "id"> = {
@@ -53,6 +54,7 @@ const defaultTextElement: Omit<TextElement, "id"> = {
 		"background.paddingY": defaultTextBackground.paddingY,
 		"background.offsetX": defaultTextBackground.offsetX,
 		"background.offsetY": defaultTextBackground.offsetY,
+		"background.mode": defaultTextBackground.mode,
 		"transform.positionX": defaultTransform.position.x,
 		"transform.positionY": defaultTransform.position.y,
 		"transform.scaleX": defaultTransform.scaleX,

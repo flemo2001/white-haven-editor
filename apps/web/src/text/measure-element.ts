@@ -220,6 +220,14 @@ export function buildTextBackgroundFromElement({
 			key: "background.offsetY",
 			fallback: DEFAULTS.text.background.offsetY,
 		}),
+		mode:
+			readStringParam({
+				params: element.params,
+				key: "background.mode",
+				fallback: DEFAULTS.text.background.mode,
+			}) === "per-letter"
+				? "per-letter"
+				: "block",
 	};
 }
 
